@@ -49,7 +49,7 @@ async def websocket_listen():
                         await send_to_pushover(title)
                     else:
                         logger.info(
-                            f"Title doesn't match a listing on Coinbase: {news_event_json['title']}"
+                            f"Title doesn't match a listing: {news_event_json['title']}"
                         )
 
                     await websocket.ping()
