@@ -5,15 +5,15 @@ import orjson
 import logging
 import aiohttp
 
-WEBSOCKET_URI = "wss://news.treeofalpha.com/ws"
-TITLES_SET = (
+WEBSOCKET_URI = "ws://localhost:8765"
+TITLES_LIST = [
     "Binance Will List",
     "마켓 디지털 자산 추가",  # upbit
     "Binance Futures Will Launch",
     "Coinbase Roadmap",  # coinbase
     "New Listing",  # bybit
     "[마켓 추가]",  # bithumb
-)
+]
 
 logger = logging.getLogger("[DUFF-ALERTS]")
 logger.setLevel(logging.INFO)
@@ -45,6 +45,9 @@ async def websocket_listen():
 
                     title = process_title(news_event_json)
 
+                    logger.info(f"Title: {title}")
+                    logger.info(f"News Event: {news_event_json}")
+
                     if title:
                         await send_to_pushover(title)
                     else:
@@ -67,8 +70,9 @@ def process_title(response):
         if "title" in response:
             title = response["title"]
 
-            if title in TITLES_SET:
-                return title
+            for listing in TITLES_LIST:
+                if listing in title:
+                    return title
     except KeyError:
         logger.error(f"Title not in tree: {response}")
 
